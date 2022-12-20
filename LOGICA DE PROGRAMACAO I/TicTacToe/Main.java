@@ -1,17 +1,14 @@
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
-public class Main  {
-    static Scanner sc = new Scanner(System.in);
-    static Set<Integer> slotsAvaliable = new LinkedHashSet<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9));
+public class Main {
+    static Scanner scan = new Scanner(System.in);
+    static Set<Integer> slotsAvailable = new LinkedHashSet<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9));
     static char[][] gameCharMatrix = {{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}};
 
     static byte[][] gameMatrixId = new byte[3][3];
     static byte playerId = 1;//Indica de qual jogador é a vez (1 ou -1)
 
-    static void pointer(int num) {
+    static void indexToMatrix(int num) {
         char c = (playerId == 1) ? 'X' : '0';
         num--;
         gameCharMatrix[num / 3][num % 3] = c;
@@ -19,32 +16,41 @@ public class Main  {
     }
 
     static boolean isMoveAllowed(int num) {
-        if (slotsAvaliable.contains(num)) {
-            slotsAvaliable.remove(num);
+        if (slotsAvailable.contains(num)) {
+            slotsAvailable.remove(num);
             return true;
         } else return false;
     }
 
     static void makeAMove() {
-        System.out.printf("Vez do Jogador %d:", (playerId==1)?1:2);
-        System.out.println("insira uma casa:");
-        System.out.println(Arrays.toString(slotsAvaliable.toArray()));
-        byte num = sc.nextByte();
+        System.out.printf("\nVez do Jogador %d\n", (playerId == 1) ? 1 : 2);
+        System.out.print("As casas disponiveis são: ");
+        System.out.println(Arrays.toString(slotsAvailable.toArray()));
+        System.out.print("Insira uma casa: ");
+        byte num;
+
+        try {
+            num = scan.nextByte();
+        } catch (InputMismatchException error) {
+            System.out.println("Você digitou uma entrada invádilda, tente novamente");
+            scan.next();
+            return;
+        }
+
         if (!isMoveAllowed(num)) {
             System.out.println("Movimento indisponível");
             return;
         }
-        pointer(num);
 
+        indexToMatrix(num);
         printBoard();
-
         playerId *= -1;
     }
 
     static boolean isTheGameOver() {
         int[] rowSum = {0, 0, 0};
         int[] columnSum = {0, 0, 0};
-        int[] diagnonalSum = {0, 0, 0};
+        int[] diagnonalSum = {0, 0, 0};//apesar de ter somente 2 diagonais foi usado um vetor de tamanho 3 para usar dentro do loop.
         for (int i = 0; i < 3; i++) {
             diagnonalSum[0] += gameMatrixId[i][i];
             diagnonalSum[1] += gameMatrixId[2 - i][i];
@@ -63,7 +69,7 @@ public class Main  {
                 return true;
             }
         }
-        if (slotsAvaliable.size() < 1) {
+        if (slotsAvailable.size() < 1) {
             System.out.println("O tabuleiro está completo, deu velha!");
             return true;
         }
@@ -77,6 +83,12 @@ public class Main  {
     }
 
     static void play() {
+        System.out.println("Iniciando o jogo da velha.");
+        System.out.println("As entradas são os numeros de 1 a 9 conforme mostrado a baixo.");
+        System.out.print("  1 | 2 | 3 \n");
+        System.out.print("  4 | 5 | 6 \n");
+        System.out.print("  7 | 8 | 9 \n");
+
         while (!isTheGameOver()) {
             makeAMove();
         }
