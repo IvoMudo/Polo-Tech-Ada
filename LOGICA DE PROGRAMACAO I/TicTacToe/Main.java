@@ -8,7 +8,7 @@ public class Main {
     static byte[][] gameMatrixId = new byte[3][3];
     static byte playerId = 1;//Indica de qual jogador é a vez (1 ou -1)
 
-    static void indexToMatrix(int num) {
+    static void putInMatrix(int num) {
         char c = (playerId == 1) ? 'X' : '0';
         num--;
         gameCharMatrix[num / 3][num % 3] = c;
@@ -42,7 +42,7 @@ public class Main {
             return;
         }
 
-        indexToMatrix(num);
+        putInMatrix(num);
         printBoard();
         playerId *= -1;
     }
